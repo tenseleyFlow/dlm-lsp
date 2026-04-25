@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 from lsprotocol import types as lsp
-from pygls.server import LanguageServer
+from pygls.lsp.server import LanguageServer
 
 from dlm_lsp.capabilities import (
     COMPLETION_TRIGGER_CHARACTERS,
