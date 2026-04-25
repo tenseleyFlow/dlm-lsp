@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from typing import Any
 
 from lsprotocol import types as lsp
 
@@ -12,9 +11,7 @@ from dlm_lsp.doc_state import DocumentState
 _FRONTMATTER_DELIM = re.compile(r"^---\s*$")
 
 
-def compute_completions(
-    state: DocumentState, position: lsp.Position
-) -> lsp.CompletionList | None:
+def compute_completions(state: DocumentState, position: lsp.Position) -> lsp.CompletionList | None:
     lines = state.text.splitlines()
     if position.line >= len(lines):
         return None
@@ -38,7 +35,9 @@ def _cursor_in_frontmatter(lines: list[str], cursor_line: int) -> bool:
 
 
 def _frontmatter_completions(
-    lines: list[str], position: lsp.Position, line_text: str
+    lines: list[str],
+    position: lsp.Position,
+    line_text: str,  # noqa: ARG001
 ) -> lsp.CompletionList | None:
     stripped = line_text.strip()
 
@@ -58,7 +57,8 @@ def _frontmatter_completions(
 
 
 def _body_completions(
-    line_text: str, position: lsp.Position
+    line_text: str,
+    position: lsp.Position,  # noqa: ARG001
 ) -> lsp.CompletionList | None:
     stripped = line_text.strip()
     if stripped.startswith("::") or stripped == "":
@@ -122,10 +122,7 @@ def _adapter_type_completions() -> lsp.CompletionList:
 
 def _quant_completions() -> lsp.CompletionList:
     quants = ["Q4_K_M", "Q5_K_M", "Q6_K", "Q8_0"]
-    items = [
-        lsp.CompletionItem(label=q, kind=lsp.CompletionItemKind.Value)
-        for q in quants
-    ]
+    items = [lsp.CompletionItem(label=q, kind=lsp.CompletionItemKind.Value) for q in quants]
     return lsp.CompletionList(is_incomplete=False, items=items)
 
 

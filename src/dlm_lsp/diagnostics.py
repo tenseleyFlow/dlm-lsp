@@ -25,9 +25,7 @@ def compute_diagnostics(state: DocumentState) -> list[lsp.Diagnostic]:
     return diags
 
 
-def _check_frontmatter_delimiters(
-    state: DocumentState, diags: list[lsp.Diagnostic]
-) -> None:
+def _check_frontmatter_delimiters(state: DocumentState, diags: list[lsp.Diagnostic]) -> None:
     lines = state.text.splitlines()
     delim_lines: list[int] = []
     for i, line in enumerate(lines):
@@ -43,7 +41,10 @@ def _check_frontmatter_delimiters(
                 ),
                 severity=lsp.DiagnosticSeverity.Error,
                 source="dlm-lsp",
-                message="Missing YAML frontmatter delimiters (---). A .dlm file must start with a YAML frontmatter block.",
+                message=(
+                    "Missing YAML frontmatter delimiters (---). "
+                    "A .dlm file must start with a YAML frontmatter block."
+                ),
             )
         )
 

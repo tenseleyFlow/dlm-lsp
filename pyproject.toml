@@ -16,6 +16,9 @@ dependencies = [
     "lsprotocol>=2024.0",
 ]
 
+[tool.uv.sources]
+dlm = { path = "../..", editable = true }
+
 [project.scripts]
 dlm-lsp = "dlm_lsp.server:main"
 
@@ -30,7 +33,10 @@ line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I", "UP", "B", "N", "C4", "SIM", "PT", "RET", "ARG", "PTH", "TID"]
+select = ["E", "F", "W", "I", "UP", "B", "N", "C4", "SIM", "PT", "RET", "PTH", "TID"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/dlm_lsp/server.py" = ["ARG001"]
 
 [tool.mypy]
 python_version = "3.11"

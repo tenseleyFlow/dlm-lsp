@@ -53,8 +53,18 @@ def _body_hover(line_text: str, position: lsp.Position) -> lsp.Hover | None:
 
 
 def _base_model_hover(
-    state: DocumentState, key: str, position: lsp.Position
+    state: DocumentState,
+    key: str,
+    position: lsp.Position,  # noqa: ARG001
 ) -> lsp.Hover | None:
+    if key.startswith("hf:"):
+        return lsp.Hover(
+            contents=lsp.MarkupContent(
+                kind=lsp.MarkupKind.Markdown,
+                value=f"**Custom HF model:** `{key}`",
+            ),
+        )
+
     spec = state.ensure_base_model_spec()
     if spec is None:
         try:
