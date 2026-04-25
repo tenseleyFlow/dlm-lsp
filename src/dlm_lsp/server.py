@@ -104,6 +104,28 @@ def _on_hover(ls: DlmLanguageServer, params: lsp.HoverParams) -> lsp.Hover | Non
 
 
 # ---------------------------------------------------------------------------
+# Code actions
+# ---------------------------------------------------------------------------
+
+
+@server.feature(
+    lsp.TEXT_DOCUMENT_CODE_ACTION,
+    lsp.CodeActionOptions(
+        code_action_kinds=[lsp.CodeActionKind.QuickFix, lsp.CodeActionKind.Source]
+    ),
+)
+def _on_code_action(
+    ls: DlmLanguageServer, params: lsp.CodeActionParams
+) -> list[lsp.CodeAction] | None:
+    from dlm_lsp.code_actions import compute_code_actions
+
+    state = ls.state.get(params.text_document.uri)
+    if state is None:
+        return None
+    return compute_code_actions(state, params.range, params.context.diagnostics)
+
+
+# ---------------------------------------------------------------------------
 # Commands
 # ---------------------------------------------------------------------------
 
