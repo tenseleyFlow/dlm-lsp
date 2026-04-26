@@ -139,7 +139,7 @@ def _on_execute_command(ls: DlmLanguageServer, params: lsp.ExecuteCommandParams)
 
     edit = execute_command(ls.state, params.command, params.arguments)
     if edit is not None:
-        ls.apply_edit(edit)
+        ls.workspace_apply_edit(lsp.ApplyWorkspaceEditParams(edit=edit))
     return None
 
 
@@ -229,7 +229,9 @@ def _publish_diagnostics(ls: DlmLanguageServer, uri: str) -> None:
     if state is None:
         return
     diags = compute_diagnostics(state)
-    ls.publish_diagnostics(uri, diags)
+    ls.text_document_publish_diagnostics(
+        lsp.PublishDiagnosticsParams(uri=uri, diagnostics=diags)
+    )
 
 
 # ---------------------------------------------------------------------------
