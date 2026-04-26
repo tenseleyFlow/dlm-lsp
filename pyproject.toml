@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dlm-lsp"
-version = "0.1.0"
+version = "0.1.1"
 description = "Language Server Protocol backend for .dlm files"
 readme = "README.md"
 requires-python = ">=3.11"

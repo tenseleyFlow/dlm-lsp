@@ -126,21 +126,26 @@ def _on_code_action(
 
 
 # ---------------------------------------------------------------------------
-# Commands
+# Commands (all via @server.command so pygls dispatches naturally)
 # ---------------------------------------------------------------------------
 
 
-@server.feature(
-    lsp.WORKSPACE_EXECUTE_COMMAND,
-    lsp.ExecuteCommandOptions(commands=["dlm.setBaseModel", "dlm.addSourceDirective"]),
-)
-def _on_execute_command(ls: DlmLanguageServer, params: lsp.ExecuteCommandParams) -> Any:
+@server.command("dlm.setBaseModel")
+def _cmd_set_base_model(ls: DlmLanguageServer, args: list[Any]) -> None:
     from dlm_lsp.commands import execute_command
 
-    edit = execute_command(ls.state, params.command, params.arguments)
+    edit = execute_command(ls.state, "dlm.setBaseModel", args)
     if edit is not None:
         ls.workspace_apply_edit(lsp.ApplyWorkspaceEditParams(edit=edit))
-    return None
+
+
+@server.command("dlm.addSourceDirective")
+def _cmd_add_source(ls: DlmLanguageServer, args: list[Any]) -> None:
+    from dlm_lsp.commands import execute_command
+
+    edit = execute_command(ls.state, "dlm.addSourceDirective", args)
+    if edit is not None:
+        ls.workspace_apply_edit(lsp.ApplyWorkspaceEditParams(edit=edit))
 
 
 # ---------------------------------------------------------------------------
