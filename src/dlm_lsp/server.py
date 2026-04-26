@@ -131,19 +131,19 @@ def _on_code_action(
 
 
 @server.command("dlm.setBaseModel")
-def _cmd_set_base_model(ls: DlmLanguageServer, args: list[Any]) -> None:
+def _cmd_set_base_model(ls: DlmLanguageServer, *args: Any) -> None:
     from dlm_lsp.commands import execute_command
 
-    edit = execute_command(ls.state, "dlm.setBaseModel", args)
+    edit = execute_command(ls.state, "dlm.setBaseModel", list(args))
     if edit is not None:
         ls.workspace_apply_edit(lsp.ApplyWorkspaceEditParams(edit=edit))
 
 
 @server.command("dlm.addSourceDirective")
-def _cmd_add_source(ls: DlmLanguageServer, args: list[Any]) -> None:
+def _cmd_add_source(ls: DlmLanguageServer, *args: Any) -> None:
     from dlm_lsp.commands import execute_command
 
-    edit = execute_command(ls.state, "dlm.addSourceDirective", args)
+    edit = execute_command(ls.state, "dlm.addSourceDirective", list(args))
     if edit is not None:
         ls.workspace_apply_edit(lsp.ApplyWorkspaceEditParams(edit=edit))
 
@@ -154,7 +154,7 @@ def _cmd_add_source(ls: DlmLanguageServer, args: list[Any]) -> None:
 
 
 @server.command("dlm/listBaseModels")
-def _list_base_models(ls: DlmLanguageServer, args: list[Any]) -> list[dict[str, Any]]:
+def _list_base_models(ls: DlmLanguageServer, *args: Any) -> list[dict[str, Any]]:
     try:
         from dlm.base_models import BASE_MODELS
 
@@ -176,7 +176,7 @@ def _list_base_models(ls: DlmLanguageServer, args: list[Any]) -> list[dict[str, 
 
 
 @server.command("dlm/listTemplates")
-def _list_templates(ls: DlmLanguageServer, args: list[Any]) -> list[dict[str, Any]]:
+def _list_templates(ls: DlmLanguageServer, *args: Any) -> list[dict[str, Any]]:
     try:
         from dlm.templates.registry import list_bundled
 
@@ -196,7 +196,7 @@ def _list_templates(ls: DlmLanguageServer, args: list[Any]) -> list[dict[str, An
 
 
 @server.command("dlm/documentState")
-def _document_state(ls: DlmLanguageServer, args: list[Any]) -> dict[str, Any] | None:
+def _document_state(ls: DlmLanguageServer, *args: Any) -> dict[str, Any] | None:
     if not args:
         return None
     uri: str = args[0]
