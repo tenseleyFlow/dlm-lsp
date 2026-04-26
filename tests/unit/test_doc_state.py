@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
+import pytest
+
 from dlm_lsp.doc_state import DocumentState, StateStore
 
 _MINIMAL_DLM = """\
@@ -40,6 +44,29 @@ class TestDocumentState:
         state = DocumentState(uri="file:///a.dlm", text="   ")
         assert state.ensure_parsed() is None
         assert state.parse_error is None
+
+    def test_ensure_store_creates_store_on_first_call(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        monkeypatch.setenv("DLM_HOME", str(tmp_path))
+        state = DocumentState(uri="file:///a.dlm", text=_MINIMAL_DLM)
+        created = state.ensure_store()
+        assert created is True
+        manifest = tmp_path / "store" / "01KPQ9M3000000000000000000" / "manifest.json"
+        assert manifest.exists()
+
+    def test_ensure_store_skips_if_already_exists(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        monkeypatch.setenv("DLM_HOME", str(tmp_path))
+        state = DocumentState(uri="file:///a.dlm", text=_MINIMAL_DLM)
+        state.ensure_store()
+        created_again = state.ensure_store()
+        assert created_again is False
+
+    def test_ensure_store_returns_false_on_bad_doc(self) -> None:
+        state = DocumentState(uri="file:///a.dlm", text="not a dlm file")
+        assert state.ensure_store() is False
 
     def test_ensure_base_model_spec_resolves_registry_key(self) -> None:
         state = DocumentState(uri="file:///a.dlm", text=_MINIMAL_DLM)

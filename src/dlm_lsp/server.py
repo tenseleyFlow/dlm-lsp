@@ -53,7 +53,8 @@ def _on_did_open(ls: DlmLanguageServer, params: lsp.DidOpenTextDocumentParams) -
     uri = params.text_document.uri
     text = params.text_document.text
     version = params.text_document.version
-    ls.state.open(uri, text, version)
+    state = ls.state.open(uri, text, version)
+    state.ensure_store()
     _publish_diagnostics(ls, uri)
 
 

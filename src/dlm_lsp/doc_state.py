@@ -45,6 +45,40 @@ class DocumentState:
             _log.debug("parse failed for %s: %s", self.uri, exc)
         return self.parsed
 
+    def ensure_store(self) -> bool:
+        """Create the store layout + manifest if it doesn't exist yet.
+
+        Returns True if a store was created, False if it already existed
+        or if the document couldn't be parsed.
+        """
+        parsed = self.ensure_parsed()
+        if parsed is None:
+            return False
+        try:
+            from dlm.store.manifest import Manifest, save_manifest
+            from dlm.store.paths import for_dlm
+
+            store = for_dlm(parsed.frontmatter.dlm_id)
+            if store.manifest.exists():
+                return False
+            store.ensure_layout()
+            save_manifest(
+                store.manifest,
+                Manifest(
+                    dlm_id=parsed.frontmatter.dlm_id,
+                    base_model=parsed.frontmatter.base_model,
+                ),
+            )
+            _log.info(
+                "auto-created store for %s at %s",
+                parsed.frontmatter.dlm_id,
+                store.root,
+            )
+            return True
+        except Exception as exc:
+            _log.debug("store auto-create failed for %s: %s", self.uri, exc)
+            return False
+
     def ensure_base_model_spec(self) -> dict[str, Any] | None:
         if self.base_model_spec is not None:
             return self.base_model_spec
