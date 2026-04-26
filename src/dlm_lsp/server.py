@@ -22,7 +22,11 @@ class DlmLanguageServer(LanguageServer):
     """LSP server for .dlm document authoring."""
 
     def __init__(self) -> None:
-        super().__init__(SERVER_NAME, SERVER_VERSION)
+        super().__init__(
+            SERVER_NAME,
+            SERVER_VERSION,
+            text_document_sync_kind=lsp.TextDocumentSyncKind.Full,
+        )
         self.state = StateStore()
 
 
