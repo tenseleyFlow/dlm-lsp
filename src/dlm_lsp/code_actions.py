@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from lsprotocol import types as lsp
 
 from dlm_lsp.doc_state import DocumentState
@@ -10,7 +12,7 @@ from dlm_lsp.doc_state import DocumentState
 def compute_code_actions(
     state: DocumentState,
     range_: lsp.Range,
-    diagnostics: list[lsp.Diagnostic],
+    diagnostics: Sequence[lsp.Diagnostic],
 ) -> list[lsp.CodeAction]:
     actions: list[lsp.CodeAction] = []
 
