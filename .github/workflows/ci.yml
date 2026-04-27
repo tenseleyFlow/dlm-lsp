@@ -26,16 +26,8 @@ jobs:
         with:
           version: ${{ env.UV_VERSION }}
 
-      - name: Install dlm from source (dependency)
-        run: |
-          git clone --depth 1 https://github.com/tenseleyFlow/DocumentLanguageModel.git /tmp/dlm
-          cd /tmp/dlm && uv build --wheel
-          echo "DLM_WHEEL=$(ls /tmp/dlm/dist/*.whl)" >> "$GITHUB_ENV"
-
-      - name: Sync dependencies
-        run: |
-          uv sync --dev
-          uv pip install "$DLM_WHEEL"
+      - name: Sync dependencies (document-language-model from PyPI)
+        run: uv sync --dev --no-sources
 
       - name: Ruff lint
         run: uv run ruff check .
