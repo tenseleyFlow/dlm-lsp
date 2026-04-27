@@ -239,9 +239,7 @@ def _publish_diagnostics(ls: DlmLanguageServer, uri: str) -> None:
     if state is None:
         return
     diags = compute_diagnostics(state)
-    ls.text_document_publish_diagnostics(
-        lsp.PublishDiagnosticsParams(uri=uri, diagnostics=diags)
-    )
+    ls.text_document_publish_diagnostics(lsp.PublishDiagnosticsParams(uri=uri, diagnostics=diags))
 
 
 # ---------------------------------------------------------------------------
