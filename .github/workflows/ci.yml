@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [trunk]
+  pull_request:
+    branches: [trunk]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_VERSION: "0.11.6"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  lint-type-test:
+    name: lint / typecheck / test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: ${{ env.UV_VERSION }}
+
+      - name: Install dlm from source (dependency)
+        run: |
+          git clone --depth 1 https://github.com/tenseleyFlow/DocumentLanguageModel.git /tmp/dlm
+          cd /tmp/dlm && uv build --wheel
+          echo "DLM_WHEEL=$(ls /tmp/dlm/dist/*.whl)" >> "$GITHUB_ENV"
+
+      - name: Sync dependencies
+        run: |
+          uv sync --dev
+          uv pip install "$DLM_WHEEL"
+
+      - name: Ruff lint
+        run: uv run ruff check .
+
+      - name: Ruff format check
+        run: uv run ruff format --check .
+
+      - name: Mypy
+        run: uv run mypy src/dlm_lsp
+
+      - name: Pytest
+        run: uv run pytest tests/ -q
+
+      - name: Coverage
+        run: |
+          uv run pytest tests/unit/ \
+            --cov=src/dlm_lsp \
+            --cov-report=term-missing \
+            -q
