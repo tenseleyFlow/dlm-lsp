@@ -26,24 +26,30 @@ jobs:
         with:
           version: ${{ env.UV_VERSION }}
 
-      - name: Sync dependencies (document-language-model from PyPI)
-        run: uv sync --dev --no-sources
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      - name: Create venv and install (from PyPI, no lockfile)
+        run: |
+          uv venv --python ${{ env.PYTHON_VERSION }}
+          uv pip install --no-sources -e .
+          uv pip install pytest pytest-cov mypy ruff
 
       - name: Ruff lint
-        run: uv run ruff check .
+        run: .venv/bin/ruff check .
 
       - name: Ruff format check
-        run: uv run ruff format --check .
+        run: .venv/bin/ruff format --check .
 
       - name: Mypy
-        run: uv run mypy src/dlm_lsp
+        run: .venv/bin/mypy src/dlm_lsp
 
       - name: Pytest
-        run: uv run pytest tests/ -q
+        run: .venv/bin/pytest tests/ -q
 
       - name: Coverage
         run: |
-          uv run pytest tests/unit/ \
+          .venv/bin/pytest tests/unit/ \
             --cov=src/dlm_lsp \
             --cov-report=term-missing \
             -q
