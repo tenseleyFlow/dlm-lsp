@@ -11,13 +11,13 @@ requires-python = ">=3.11"
 license = "MIT"
 authors = [{ name = "mfwolffe", email = "mfwolffe@outlook.com" }]
 dependencies = [
-    "dlm",
+    "document-language-model",
     "pygls>=1.3",
     "lsprotocol>=2024.0",
 ]
 
 [tool.uv.sources]
-dlm = { path = "../..", editable = true }
+document-language-model = { path = "../..", editable = true }
 
 [project.scripts]
 dlm-lsp = "dlm_lsp.server:main"
