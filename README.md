@@ -15,6 +15,20 @@ Language Server Protocol backend for `.dlm` files.
 pip install dlm-lsp
 ```
 
+This pulls `document-language-model` from PyPI as a runtime dependency.
+
+## Compatibility
+
+| `dlm-lsp` | `document-language-model` |
+| :-- | :-- |
+| `0.1.x` | `0.10.x` |
+
+The LSP imports from `dlm.doc.parser`, `dlm.doc.schema`, `dlm.base_models`,
+and `dlm.store.manifest`. A major-version drift on either side can break
+imports or schema validation. The LSP logs both versions at startup
+(visible in your editor's LSP log channel) so mismatches surface
+immediately. Pin a matching pair if you mix custom forks.
+
 ## Usage
 
 The `dlm-lsp` binary launches a Language Server over stdio:

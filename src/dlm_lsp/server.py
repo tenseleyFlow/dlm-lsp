@@ -249,4 +249,30 @@ def _publish_diagnostics(ls: DlmLanguageServer, uri: str) -> None:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(name)s: %(message)s")
+    _log_runtime_versions()
     server.start_io()
+
+
+def _log_runtime_versions() -> None:
+    """Surface the dlm-lsp + document-language-model version pair on startup.
+
+    Drift between the LSP server and its dlm dependency can silently break
+    imports or schema validation. Logging both at startup makes mismatches
+    diagnosable from the LSP log without a separate health check.
+    """
+    log = logging.getLogger("dlm_lsp")
+    try:
+        from importlib.metadata import version as _pkg_version
+
+        lsp_version = _pkg_version("dlm-lsp")
+    except Exception:  # noqa: BLE001 — diagnostics shouldn't fail startup
+        lsp_version = "unknown"
+
+    try:
+        import dlm
+
+        dlm_version = getattr(dlm, "__version__", "unknown")
+    except Exception:  # noqa: BLE001
+        dlm_version = "unimportable"
+
+    log.info("dlm-lsp %s ↔ document-language-model %s", lsp_version, dlm_version)
